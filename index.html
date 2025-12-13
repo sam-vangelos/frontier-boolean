@@ -1,0 +1,3898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boolean Construction Template v4.8</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-elevated: #1c2128;
+            --border-primary: #30363d;
+            --border-accent: #3b82f6;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-orange: #d29922;
+            --accent-red: #f85149;
+            --accent-purple: #a371f7;
+            --accent-cyan: #39c5cf;
+            --code-bg: #0d1117;
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-primary);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-primary);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 24px 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid var(--border-primary);
+            margin-bottom: 16px;
+        }
+
+        .sidebar-logo {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+        }
+
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .sidebar-version {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .nav-section {
+            padding: 8px 16px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 8px;
+            margin-bottom: 4px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 10px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+            border-radius: var(--radius-sm);
+            transition: all 0.15s ease;
+            border-left: 2px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: rgba(88, 166, 255, 0.1);
+            color: var(--accent-blue);
+            border-left-color: var(--accent-blue);
+        }
+
+        .main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 48px 64px;
+            max-width: 960px;
+        }
+
+        .page-header {
+            margin-bottom: 48px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .page-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid rgba(88, 166, 255, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent-blue);
+            margin-bottom: 16px;
+        }
+
+        .page-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .page-title {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 600px;
+        }
+
+        .page-meta {
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .page-meta strong {
+            color: var(--text-secondary);
+        }
+
+        .section {
+            margin-bottom: 56px;
+            scroll-margin-top: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .section-toggle {
+            margin-left: auto;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .section-header:hover .section-toggle {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .section-toggle svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.2s ease;
+        }
+
+        .section.collapsed .section-toggle svg {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            padding-left: 48px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .section.collapsed .section-content {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+        }
+
+        .subsection {
+            margin-bottom: 32px;
+        }
+
+        .subsection-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subsection-title::before {
+            content: '';
+            width: 3px;
+            height: 18px;
+            background: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .code-block {
+            position: relative;
+            background: var(--code-bg);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .code-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .code-copy {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .code-copy:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+        }
+
+        .code-copy.copied {
+            background: rgba(63, 185, 80, 0.1);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .code-copy svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.2) 0%, rgba(163, 113, 247, 0.2) 100%);
+            border: 1px solid var(--accent-blue);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.3) 0%, rgba(163, 113, 247, 0.3) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.2);
+        }
+
+        .download-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        pre {
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-cyan);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .keyword { color: var(--accent-purple); }
+        .string { color: var(--accent-green); }
+        .comment { color: var(--text-muted); font-style: italic; }
+        .operator { color: var(--accent-orange); }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-primary);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-primary);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--bg-secondary);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .tag-recent { background: rgba(210, 153, 34, 0.15); color: var(--accent-orange); }
+        .tag-ambiguous { background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
+
+        .signal {
+            display: inline-flex;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .signal-target { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+        .signal-adjacent { background: rgba(210, 153, 34, 0.15); color: var(--accent-orange); }
+        .signal-false { background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
+
+        .callout {
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+            border-left: 3px solid;
+        }
+
+        .callout-critical {
+            background: rgba(248, 81, 73, 0.08);
+            border-color: var(--accent-red);
+        }
+
+        .callout-info {
+            background: rgba(88, 166, 255, 0.08);
+            border-color: var(--accent-blue);
+        }
+
+        .callout-success {
+            background: rgba(63, 185, 80, 0.08);
+            border-color: var(--accent-green);
+        }
+
+        .callout-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .callout-critical .callout-title { color: var(--accent-red); }
+        .callout-info .callout-title { color: var(--accent-blue); }
+        .callout-success .callout-title { color: var(--accent-green); }
+
+        .callout p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        li::marker {
+            color: var(--accent-blue);
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .checklist-box {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-primary);
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .ref-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .ref-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ref-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .ref-card-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .ref-card-item-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .ref-card-item ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .ref-card-item li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            margin: 0;
+        }
+
+        /* Block Relationships Styles */
+        .relationship-group {
+            margin-bottom: 24px;
+        }
+
+        .relationship-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .relationship-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .relationship-symbol {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            width: 24px;
+            text-align: center;
+        }
+
+        .relationship-symbol.strong { color: var(--accent-green); }
+        .relationship-symbol.validates { color: var(--accent-blue); }
+        .relationship-symbol.differentiates { color: var(--accent-orange); }
+        .relationship-symbol.excludes { color: var(--accent-red); }
+
+        .relationship-blocks {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+        }
+
+        .relationship-meaning {
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        .cluster-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .cluster-tag {
+            padding: 4px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+        }
+
+        /* Archetype Accordion Styles */
+        .archetype-list {
+            margin-top: 16px;
+        }
+
+        .archetype-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .archetype-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s ease;
+        }
+
+        .archetype-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .archetype-toggle {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            color: var(--accent-blue);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .archetype-toggle svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s ease;
+        }
+
+        .archetype-item.expanded .archetype-toggle svg {
+            transform: rotate(90deg);
+        }
+
+        .archetype-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .archetype-summary {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-left: 4px;
+        }
+
+        .archetype-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .archetype-item.expanded .archetype-content {
+            max-height: 2000px;
+        }
+
+        .archetype-body {
+            padding: 0 20px 20px 56px;
+            border-top: 1px solid var(--border-primary);
+        }
+
+        .archetype-section {
+            margin-top: 20px;
+        }
+
+        .archetype-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .archetype-section p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .archetype-section ul {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .archetype-section li {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .archetype-blocks {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .archetype-block {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-blue);
+        }
+
+        .archetype-search-path {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            font-size: 13px;
+        }
+
+        .archetype-search-path-row {
+            display: flex;
+            gap: 12px;
+            padding: 4px 0;
+        }
+
+        .archetype-search-path-label {
+            color: var(--text-muted);
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .archetype-search-path-value {
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .footer {
+            margin-top: 64px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-primary);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .footer-version {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 32px 24px;
+            }
+
+            .page-title {
+                font-size: 32px;
+            }
+
+            .section-content {
+                padding-left: 0;
+            }
+
+            .archetype-body {
+                padding-left: 20px;
+            }
+        }
+
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 200;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-toggle {
+                display: flex;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .section:nth-child(1) { animation-delay: 0.05s; }
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.15s; }
+        .section:nth-child(4) { animation-delay: 0.2s; }
+        .section:nth-child(5) { animation-delay: 0.25s; }
+        .section:nth-child(6) { animation-delay: 0.3s; }
+        .section:nth-child(7) { animation-delay: 0.35s; }
+        .section:nth-child(8) { animation-delay: 0.4s; }
+        .section:nth-child(9) { animation-delay: 0.45s; }
+    </style>
+</head>
+<body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">Template</div>
+                <div class="sidebar-title">Boolean Construction</div>
+                <div class="sidebar-version">v4.8 · Sam Vangelos</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Getting Started</div>
+                <a href="#system-prompt" class="nav-link">System Prompt</a>
+                <a href="#models" class="nav-link">Recommended Models</a>
+                <a href="#inputs" class="nav-link">0. Inputs</a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Structure</div>
+                <a href="#boolean-structure" class="nav-link">1. Boolean Structure</a>
+                <a href="#expansion" class="nav-link">2. Expansion Dimensions</a>
+                <a href="#tagging" class="nav-link">3. Tagging Schema</a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Output</div>
+                <a href="#output-format" class="nav-link">4. Output Format</a>
+                <a href="#block-relationships" class="nav-link">↳ Block Relationships</a>
+                <a href="#archetypes" class="nav-link">↳ Archetypes</a>
+                <a href="#disambiguation" class="nav-link">5. Disambiguation Guide</a>
+                <a href="#platform-syntax" class="nav-link">6. Platform Syntax</a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Execution</div>
+                <a href="#iteration" class="nav-link">7. Iteration Playbook</a>
+                <a href="#final-check" class="nav-link">8. Final Check</a>
+            </div>
+        </nav>
+
+        <main class="main">
+            <header class="page-header">
+                <div class="page-badge">Technical Recruiting</div>
+                <h1 class="page-title">Boolean Construction Template</h1>
+                <p class="page-subtitle">Generate precision-tuned Boolean search strings for frontier AI roles. Just provide a JD—Claude extracts, analyzes, and outputs a styled, interactive HTML file with copy buttons.</p>
+                <p class="page-meta"><strong>v4.8</strong> · December 2025 · Created by Sam Vangelos</p>
+            </header>
+
+            <!-- System Prompt -->
+            <section class="section" id="system-prompt">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">SP</span>
+                    <h2 class="section-title">System Prompt</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <p>Download the full template and attach it to Claude along with your JD:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-label">System Prompt</span>
+                            <button class="download-btn" onclick="downloadTemplate()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                <span>Download Template (.md)</span>
+                            </button>
+                        </div>
+<pre>You are a technical recruiting search specialist. Your task is to generate Boolean search strings and contextual guidance for finding candidates for the role described below.
+
+You will receive:
+- A job description or intake notes
+
+From the job description, you must:
+- Extract key tools, benchmarks, frameworks, and systems mentioned or implied
+- Identify domain-specific terminology and adjacent technical areas
+- Map how different concept clusters relate to each other
+- Infer 2-4 candidate archetypes that would be strong fits
+
+You must produce a STANDALONE HTML FILE. The HTML should include:
+1. Role title and extracted signals summary
+2. Boolean search blocks with collapsible sub-blocks and single-line clusters
+3. Block relationships showing how blocks connect, overlap, validate, or differentiate
+4. Inferred archetypes (collapsible) with descriptions and search paths
+5. Context disambiguation guide for ambiguous terms
+6. Exclusion patterns for false positives
+7. Ready-to-use platform-specific strings (LinkedIn, GitHub, X) with copy buttons
+
+Key v4.8 features:
+- Blocks → Sub-blocks → Clusters hierarchy
+- Sub-blocks auto-collapse when 2+ in a block
+- Clusters are single-line, click to expand
+- Recent clusters use class="cluster cluster-recent" for ⚡ indicator
+- No emojis in platform string titles
+
+Follow the structure defined in the downloaded template exactly.</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recommended Models -->
+            <section class="section" id="models">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">M</span>
+                    <h2 class="section-title">Recommended Models</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Use Case</th>
+                                    <th>Recommended Model</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Full template execution</td>
+                                    <td><strong>Claude Opus 4.5</strong></td>
+                                    <td>Required for HTML output generation</td>
+                                </tr>
+                                <tr>
+                                    <td>Fast iteration</td>
+                                    <td><strong>Claude Sonnet 4.5</strong></td>
+                                    <td>May work for simpler roles; verify HTML output</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 0: Inputs -->
+            <section class="section" id="inputs">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">0</span>
+                    <h2 class="section-title">Inputs</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3 class="subsection-title">Required</h3>
+                        <ul>
+                            <li><strong>Job description or intake notes</strong> — Full role context including responsibilities, requirements, team structure</li>
+                        </ul>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Optional</h3>
+                        <ul>
+                            <li><strong>Known false positives</strong> — Keywords or profiles that look right but aren't</li>
+                        </ul>
+                    </div>
+
+                    <div class="callout callout-info">
+                        <div class="callout-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            LLM Does the Heavy Lifting
+                        </div>
+                        <p>The LLM will extract tools, benchmarks, and systems from the JD, map block relationships, and infer candidate archetypes. Do not pre-define these—that's the LLM's job.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 1: Boolean Structure -->
+            <section class="section" id="boolean-structure">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">1</span>
+                    <h2 class="section-title">Boolean Structure</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3 class="subsection-title">Content Hierarchy</h3>
+                        <p>v4.8 organizes Boolean content into three levels:</p>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Level</th>
+                                        <th>Contains</th>
+                                        <th>Behavior</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Block</strong></td>
+                                        <td>2-4 sub-blocks</td>
+                                        <td>Blue left border, always visible</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sub-block</strong></td>
+                                        <td>2-4 clusters</td>
+                                        <td>Collapsible when 2+ in block; shows cluster count badge</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cluster</strong></td>
+                                        <td>Boolean string</td>
+                                        <td>Single-line, truncated; click row to expand</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Block Types</h3>
+                        <p>Organize into <strong>5-8 blocks</strong> based on conceptual clusters:</p>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Block Type</th>
+                                        <th>What It Captures</th>
+                                        <th>Example</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Core Task</td>
+                                        <td>Primary job function</td>
+                                        <td>Code generation, reward modeling</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tooling/Products</td>
+                                        <td>Specific tools and products</td>
+                                        <td>Claude Code, Cursor, SWE-bench</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Infrastructure</td>
+                                        <td>Systems and pipelines</td>
+                                        <td>Repo sandboxing, eval harness</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Methods/Techniques</td>
+                                        <td>Approaches and methodologies</td>
+                                        <td>RLHF, DPO, fine-tuning</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Validation/Eval</td>
+                                        <td>Benchmarks and measurement</td>
+                                        <td>HumanEval, pass@k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Leadership Signals</td>
+                                        <td>Seniority and role indicators</td>
+                                        <td>Tech lead, built team, published</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Cluster Types</h3>
+                        <p>Each cluster has a type that signals its search strategy:</p>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Purpose</th>
+                                        <th>CSS Class</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>Broad</code></td>
+                                        <td>High recall, catches anyone in the space</td>
+                                        <td>(none)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>Established</code></td>
+                                        <td>Mainstream methods/tools (2+ years)</td>
+                                        <td>(none)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>Recent</code></td>
+                                        <td>Cutting-edge (last 12-18 months)</td>
+                                        <td><code>cluster-recent</code> → adds ⚡</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>Specific</code></td>
+                                        <td>Implementation-level, niche terms</td>
+                                        <td>(none)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Collapsible Behavior</h3>
+                        <div class="callout callout-info">
+                            <div class="callout-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 16v-4M12 8h.01"/>
+                                </svg>
+                                Auto-Collapse Logic
+                            </div>
+                            <p>When a block contains <strong>2+ sub-blocks</strong>, all sub-blocks start collapsed. When a block has only 1 sub-block, it starts expanded (no toggle). This keeps the interface scannable while preserving access to depth.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Expansion Dimensions -->
+            <section class="section" id="expansion">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">2</span>
+                    <h2 class="section-title">Expansion Dimensions</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <p>For each concept cluster, exhaust these dimensions:</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dimension</th>
+                                    <th>What to Include</th>
+                                    <th>Example (for "fine-tuning")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Lexical variants</strong></td>
+                                    <td>Spelling, hyphenation, abbreviation, case</td>
+                                    <td>fine-tuning, fine tuning, finetuning, FT</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool/library names</strong></td>
+                                    <td>Frameworks, repos, packages</td>
+                                    <td>TRL, Axolotl, OpenRLHF, LLaMA-Factory</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Academic terminology</strong></td>
+                                    <td>Research paper language</td>
+                                    <td>preference learning, learning from human feedback</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Industry terminology</strong></td>
+                                    <td>Job posting language</td>
+                                    <td>post-training, model alignment, chat tuning</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Older terms</strong></td>
+                                    <td>Previous-generation terminology</td>
+                                    <td>REINFORCE, policy gradient, behavioral cloning</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Emerging terms</strong></td>
+                                    <td>Recent methods (last 12-18 months)</td>
+                                    <td>KTO, ORPO, IPO, SimPO</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Domain-specific</strong></td>
+                                    <td>Target domain manifestation</td>
+                                    <td>code verifier, execution feedback, unit test reward</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Infrastructure</strong></td>
+                                    <td>Enabling systems/tools</td>
+                                    <td>DeepSpeed, FSDP, vLLM, Megatron</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Filename/code tokens</strong></td>
+                                    <td>GitHub-specific patterns</td>
+                                    <td>sft_trainer.py, dpo_config, reward_model.py</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Why This Matters</h3>
+                        <p>Conventional searches use obvious terms like "RLHF" and "fine-tuning." <strong>Everyone fishes in that pool.</strong></p>
+                        <p>Expanding across dimensions surfaces:</p>
+                        <ul>
+                            <li>Researchers who use academic framing</li>
+                            <li>Practitioners who name specific tools</li>
+                            <li>Infrastructure builders who mention enabling systems</li>
+                            <li>Early adopters using emerging terminology</li>
+                        </ul>
+                        <p>These candidates are often <strong>higher quality and lower competition</strong>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Tagging Schema -->
+            <section class="section" id="tagging">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">3</span>
+                    <h2 class="section-title">Tagging Schema</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3 class="subsection-title">Cluster Types Replace Tags</h3>
+                        <p>In v4.8, the old <code>#recent</code> and <code>#ambiguous</code> text tags are replaced by <strong>cluster types</strong> (see Section 1). Tagging is now built into the cluster structure:</p>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Old Tag</th>
+                                        <th>v4.8 Equivalent</th>
+                                        <th>Implementation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>#recent</code></td>
+                                        <td>Cluster type: <code>Recent</code></td>
+                                        <td>Use <code>class="cluster cluster-recent"</code> → adds ⚡ indicator</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>#ambiguous</code></td>
+                                        <td>Disambiguation section</td>
+                                        <td>Document anchors in Section 5 (Disambiguation Guide)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Ambiguous Terms</h3>
+                        <p>Terms that require context anchoring go in the <strong>Disambiguation Guide</strong> (Section 5), not inline tags. This keeps clusters clean and scannable.</p>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-label">Disambiguation Entry Example</span>
+                            </div>
+<pre><span class="comment">Term:</span> "agent"
+
+<span class="keyword">If paired with...</span>          <span class="keyword">Likely context</span>        <span class="keyword">Signal</span>
+"coding" / "AI" / "LLM"      AI/ML agent           ✓ Target
+"real estate" / "insurance"  Industry role         ✗ False positive
+"customer service"           Support role          ✗ False positive
+
+<span class="comment">Recommendation:</span> Always pair with ("coding" OR "AI" OR "LLM" OR "agentic")</pre>
+                        </div>
+                    </div>
+
+                    <div class="callout callout-info">
+                        <div class="callout-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            Why This Change?
+                        </div>
+                        <p>Inline text tags added visual noise without adding functionality. CSS classes (like <code>cluster-recent</code>) actually trigger visual indicators. Disambiguation entries provide actionable context. Tags that don't trigger behavior are just labels.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Output Format -->
+            <section class="section" id="output-format">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">4</span>
+                    <h2 class="section-title">Output Format</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3 class="subsection-title">4.1 Block Hierarchy</h3>
+                        <p>Content is organized into three levels:</p>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Level</th>
+                                        <th>Contains</th>
+                                        <th>Behavior</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Block</strong></td>
+                                        <td>2-4 sub-blocks</td>
+                                        <td>Blue left border, always visible</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sub-block</strong></td>
+                                        <td>2-4 clusters</td>
+                                        <td>Collapsible when 2+ in block; shows cluster count</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cluster</strong></td>
+                                        <td>Boolean string</td>
+                                        <td>Single-line, truncated; click to expand</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">4.2 Cluster Types</h3>
+                        <p>Each cluster has a type that signals its search strategy:</p>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Purpose</th>
+                                        <th>CSS Class</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>Broad</code></td>
+                                        <td>High recall, catches anyone in the space</td>
+                                        <td>(none)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>Established</code></td>
+                                        <td>Mainstream methods/tools (2+ years)</td>
+                                        <td>(none)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>Recent</code></td>
+                                        <td>Cutting-edge (last 12-18 months)</td>
+                                        <td><code>cluster-recent</code> → adds ⚡</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>Specific</code></td>
+                                        <td>Implementation-level, niche terms</td>
+                                        <td>(none)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Block Relationships -->
+                    <div class="subsection" id="block-relationships">
+                        <h3 class="subsection-title">4.3 Block Relationships</h3>
+                        <p>Maps how blocks connect—independent of any specific archetype. Users can follow archetype paths or use these relationships to build custom combinations.</p>
+
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Relationship</th>
+                                        <th>Symbol</th>
+                                        <th>Meaning</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Strong signal</strong></td>
+                                        <td><code>+</code></td>
+                                        <td>Profiles with A often have B; co-occurrence indicates depth</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Validates</strong></td>
+                                        <td><code>→</code></td>
+                                        <td>B confirms expertise in A</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Differentiates</strong></td>
+                                        <td><code>|</code></td>
+                                        <td>A without B (or vice versa) signals different profile type</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Excludes</strong></td>
+                                        <td><code>✗</code></td>
+                                        <td>A + C together = likely false positive</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-label">Example Output</span>
+                            </div>
+<pre><span class="comment">### Block Relationships</span>
+
+<span class="keyword">Strong signals:</span>
+• Block 1 + Block 2 → Builds and trains (not just uses)
+• Block 2 + Block 4 → Infrastructure-level work
+
+<span class="keyword">Validates:</span>
+• Block 3 → Block 1 (benchmarks validate agent work)
+• Block 5 → Block 2 (execution environments validate training depth)
+
+<span class="keyword">Differentiates:</span>
+• Block 2 without Block 3 | General ML, not code-focused
+• Block 1 without Block 2 | Uses agents, doesn't build/train them
+
+<span class="keyword">Excludes:</span>
+• Block 1 + "customer service" ✗ Wrong kind of agent
+
+<span class="keyword">High co-occurrence clusters:</span> [1, 2], [2, 4], [3, 5]
+<span class="keyword">Independent signals:</span> [6]</pre>
+                        </div>
+                    </div>
+
+                    <!-- Archetypes -->
+                    <div class="subsection" id="archetypes">
+                        <h3 class="subsection-title">4.4 Inferred Archetypes</h3>
+                        <p>Present 2-4 archetypes inferred from the JD. Each archetype is <strong>collapsed by default</strong>—expand only the ones relevant to your search to see how block relationships apply specifically.</p>
+
+                        <div class="archetype-list">
+                            <div class="archetype-item">
+                                <div class="archetype-header" onclick="toggleArchetype(this)">
+                                    <span class="archetype-toggle">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 18l6-6-6-6"/>
+                                        </svg>
+                                    </span>
+                                    <span class="archetype-name">Agent Infrastructure Engineer</span>
+                                    <span class="archetype-summary">— Builds systems that enable code agents to run, train, and improve</span>
+                                </div>
+                                <div class="archetype-content">
+                                    <div class="archetype-body">
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Description</div>
+                                            <p>Engineers who build the underlying infrastructure for code agents—execution sandboxes, environment orchestration, training pipelines. They work at the systems level, not the application level.</p>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Key Blocks</div>
+                                            <div class="archetype-blocks">
+                                                <span class="archetype-block">Block 1: Code Agents</span>
+                                                <span class="archetype-block">Block 2: Post-Training</span>
+                                                <span class="archetype-block">Block 5: Execution Environments</span>
+                                            </div>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Relationship Logic</div>
+                                            <ul>
+                                                <li><strong>Block 1 + Block 2</strong> = Builds and trains agents (not just uses them)</li>
+                                                <li><strong>Block 2 + Block 5</strong> = Infrastructure-level work (not just runs training jobs)</li>
+                                                <li><strong>Block 1 without Block 3</strong> = Builder, not evaluator</li>
+                                            </ul>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Distinguishing Signal</div>
+                                            <p>Mentions execution sandboxing, environment orchestration, or training infrastructure—not just "used Claude Code" or "fine-tuned a model"</p>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Search Path</div>
+                                            <div class="archetype-search-path">
+                                                <div class="archetype-search-path-row">
+                                                    <span class="archetype-search-path-label">Start:</span>
+                                                    <span class="archetype-search-path-value">Block 1 AND Block 2</span>
+                                                </div>
+                                                <div class="archetype-search-path-row">
+                                                    <span class="archetype-search-path-label">Add for precision:</span>
+                                                    <span class="archetype-search-path-value">Block 5</span>
+                                                </div>
+                                                <div class="archetype-search-path-row">
+                                                    <span class="archetype-search-path-label">Validate:</span>
+                                                    <span class="archetype-search-path-value">Block 7 (Leadership)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="archetype-item">
+                                <div class="archetype-header" onclick="toggleArchetype(this)">
+                                    <span class="archetype-toggle">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 18l6-6-6-6"/>
+                                        </svg>
+                                    </span>
+                                    <span class="archetype-name">Post-Training Specialist</span>
+                                    <span class="archetype-summary">— Focuses on RLHF/DPO pipelines specifically for code models</span>
+                                </div>
+                                <div class="archetype-content">
+                                    <div class="archetype-body">
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Description</div>
+                                            <p>ML engineers who specialize in the post-training phase—RLHF, DPO, reward modeling, preference data curation. They understand both the algorithmic and data aspects of alignment.</p>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Key Blocks</div>
+                                            <div class="archetype-blocks">
+                                                <span class="archetype-block">Block 2: Post-Training</span>
+                                                <span class="archetype-block">Block 4: Data Generation</span>
+                                                <span class="archetype-block">Block 3: Code Benchmarks</span>
+                                            </div>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Relationship Logic</div>
+                                            <ul>
+                                                <li><strong>Block 2 + Block 4</strong> = Understands full pipeline (not just training)</li>
+                                                <li><strong>Block 3 → Block 2</strong> = Can evaluate their own work</li>
+                                                <li><strong>Block 2 without Block 1</strong> = General post-training, may need code domain ramp-up</li>
+                                            </ul>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Distinguishing Signal</div>
+                                            <p>Mentions specific post-training tools (TRL, Axolotl), reward model architecture, or preference data strategies—not just "familiar with RLHF"</p>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Search Path</div>
+                                            <div class="archetype-search-path">
+                                                <div class="archetype-search-path-row">
+                                                    <span class="archetype-search-path-label">Start:</span>
+                                                    <span class="archetype-search-path-value">Block 2</span>
+                                                </div>
+                                                <div class="archetype-search-path-row">
+                                                    <span class="archetype-search-path-label">Add for precision:</span>
+                                                    <span class="archetype-search-path-value">Block 4 OR Block 3</span>
+                                                </div>
+                                                <div class="archetype-search-path-row">
+                                                    <span class="archetype-search-path-label">Validate:</span>
+                                                    <span class="archetype-search-path-value">Block 1 (code domain)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="archetype-item">
+                                <div class="archetype-header" onclick="toggleArchetype(this)">
+                                    <span class="archetype-toggle">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 18l6-6-6-6"/>
+                                        </svg>
+                                    </span>
+                                    <span class="archetype-name">Eval & Benchmark Engineer</span>
+                                    <span class="archetype-summary">— Designs and operates code evaluation infrastructure</span>
+                                </div>
+                                <div class="archetype-content">
+                                    <div class="archetype-body">
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Description</div>
+                                            <p>Engineers who build and run code evaluation systems—benchmark harnesses, execution environments, automated testing pipelines. They measure model quality systematically.</p>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Key Blocks</div>
+                                            <div class="archetype-blocks">
+                                                <span class="archetype-block">Block 3: Code Benchmarks</span>
+                                                <span class="archetype-block">Block 5: Execution Environments</span>
+                                                <span class="archetype-block">Block 1: Code Agents</span>
+                                            </div>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Relationship Logic</div>
+                                            <ul>
+                                                <li><strong>Block 3 + Block 5</strong> = Runs evals at scale (not just reports metrics)</li>
+                                                <li><strong>Block 3 → Block 1</strong> = Validates agent capabilities</li>
+                                                <li><strong>Block 3 alone</strong> = May be researcher, not builder</li>
+                                            </ul>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Distinguishing Signal</div>
+                                            <p>Mentions specific benchmarks (SWE-bench, HumanEval) with infrastructure context—execution harness, CI/CD integration, or scaling evaluation</p>
+                                        </div>
+                                        <div class="archetype-section">
+                                            <div class="archetype-section-title">Search Path</div>
+                                            <div class="archetype-search-path">
+                                                <div class="archetype-search-path-row">
+                                                    <span class="archetype-search-path-label">Start:</span>
+                                                    <span class="archetype-search-path-value">Block 3 AND Block 5</span>
+                                                </div>
+                                                <div class="archetype-search-path-row">
+                                                    <span class="archetype-search-path-label">Add for precision:</span>
+                                                    <span class="archetype-search-path-value">Block 1</span>
+                                                </div>
+                                                <div class="archetype-search-path-row">
+                                                    <span class="archetype-search-path-label">Validate:</span>
+                                                    <span class="archetype-search-path-value">Block 7 (Leadership)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="callout callout-info">
+                            <div class="callout-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 16v-4M12 8h.01"/>
+                                </svg>
+                                Example Only
+                            </div>
+                            <p>The archetypes above are illustrative. When the LLM generates output, it will infer archetypes specific to your JD.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Disambiguation Guide -->
+            <section class="section" id="disambiguation">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">5</span>
+                    <h2 class="section-title">Context Disambiguation Guide</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <p>This section helps you <strong>decode profiles</strong>, not just find them. Use it to determine whether keyword presence indicates the right kind of experience.</p>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Example Entry: PPO / DPO</h3>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>If paired with...</th>
+                                        <th>Likely context</th>
+                                        <th>Signal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>gym, environment, trajectory, rollout</td>
+                                        <td>Building RL training infrastructure</td>
+                                        <td><span class="signal signal-target">Target</span> Infra Builder</td>
+                                    </tr>
+                                    <tr>
+                                        <td>fine-tuning, SFT, model training, checkpoint</td>
+                                        <td>Using RL methods to train models</td>
+                                        <td><span class="signal signal-target">Target</span> Training Engineer</td>
+                                    </tr>
+                                    <tr>
+                                        <td>reward model, preference data, annotation</td>
+                                        <td>Reward/preference pipeline work</td>
+                                        <td><span class="signal signal-target">Target</span> Data Specialist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>game, robotics, MuJoCo, control</td>
+                                        <td>Robotics/game RL</td>
+                                        <td><span class="signal signal-adjacent">Adjacent</span> Transferable</td>
+                                    </tr>
+                                    <tr>
+                                        <td>finance, trading, optimization</td>
+                                        <td>Quantitative finance</td>
+                                        <td><span class="signal signal-false">False Positive</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-label">Pairing Recommendation</span>
+                            </div>
+<pre>For RL Gym builders, pair with (<span class="string">"environment"</span> <span class="keyword">OR</span> <span class="string">"gym"</span> <span class="keyword">OR</span> <span class="string">"trajectory"</span> <span class="keyword">OR</span> <span class="string">"rollout"</span>) to filter out pure fine-tuners.</pre>
+                        </div>
+                        <div class="callout callout-info">
+                            <div class="callout-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 16v-4M12 8h.01"/>
+                                </svg>
+                                Profile Red Flags
+                            </div>
+                            <p>If profile mentions PPO/DPO but only in context of "ran training jobs" or "used Hugging Face TRL" without infrastructure/environment work, likely a user not a builder.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Platform Syntax -->
+            <section class="section" id="platform-syntax">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">6</span>
+                    <h2 class="section-title">Platform Syntax Reference</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <div class="callout callout-critical">
+                        <div class="callout-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            Critical
+                        </div>
+                        <p>Google X-Ray does <strong>NOT</strong> support the word <code>NOT</code>. Use <code>-</code> prefix instead.</p>
+                    </div>
+
+                    <div class="ref-card">
+                        <div class="ref-card-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="9" y1="21" x2="9" y2="9"/>
+                            </svg>
+                            Quick Reference Card
+                        </div>
+                        <div class="ref-card-grid">
+                            <div class="ref-card-item">
+                                <div class="ref-card-item-title">LinkedIn Recruiter</div>
+                                <ul>
+                                    <li>AND, OR, NOT (caps)</li>
+                                    <li>"phrase", ()</li>
+                                    <li>Limit: ~2,000 chars</li>
+                                    <li>No wildcards</li>
+                                </ul>
+                            </div>
+                            <div class="ref-card-item">
+                                <div class="ref-card-item-title">GitHub Search</div>
+                                <ul>
+                                    <li>AND, OR, NOT (caps)</li>
+                                    <li>"phrase", (), /regex/</li>
+                                    <li>repo:, org:, language:</li>
+                                    <li>path:, filename:</li>
+                                </ul>
+                            </div>
+                            <div class="ref-card-item">
+                                <div class="ref-card-item-title">Google X-Ray</div>
+                                <ul>
+                                    <li>OR (caps), "phrase", ()</li>
+                                    <li><strong>NOT = -prefix</strong></li>
+                                    <li>site:, inurl:, intitle:</li>
+                                    <li>Limit: ~32 words</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Iteration -->
+            <section class="section" id="iteration">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">7</span>
+                    <h2 class="section-title">Iteration Playbook</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <div class="subsection">
+                        <h3 class="subsection-title">Zero Results</h3>
+                        <ol>
+                            <li>Remove one block at a time (start with most specific)</li>
+                            <li>Check Block Relationships—are you requiring blocks that don't co-occur?</li>
+                            <li>Check for syntax errors (missing quotes, wrong operators)</li>
+                            <li>Loosen title/seniority requirements</li>
+                            <li>Try Google X-Ray instead of native LinkedIn</li>
+                        </ol>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Too Many Results (500+)</h3>
+                        <ol>
+                            <li>Add a validating block as AND clause (see Block Relationships)</li>
+                            <li>Add seniority filter ("Senior" OR "Staff" OR "Lead")</li>
+                            <li>Add NOT clauses for observed false positives</li>
+                            <li>Use differentiating combinations to narrow to specific archetype</li>
+                        </ol>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Precision Tuning</h3>
+                        <ol>
+                            <li>Replace general terms with specific tool/benchmark names</li>
+                            <li>Add NOT clauses for false positive patterns</li>
+                            <li>Add validation block (see Block Relationships)</li>
+                        </ol>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Recall Tuning</h3>
+                        <ol>
+                            <li>Add variant expansions (hyphenated, snake_case)</li>
+                            <li>Add older tool names alongside newer ones</li>
+                            <li>Remove seniority filters</li>
+                            <li>Try GitHub search in addition to LinkedIn</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: Final Check -->
+            <section class="section" id="final-check">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">8</span>
+                    <h2 class="section-title">Final Check</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <p>Before delivering, verify:</p>
+                    
+                    <div class="subsection">
+                        <h3 class="subsection-title">Structure</h3>
+                        <ul class="checklist">
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span><strong>5-8 blocks</strong>, each with 2-4 sub-blocks</span>
+                            </li>
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span><strong>2-4 clusters</strong> per sub-block</span>
+                            </li>
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>Sub-blocks are <strong>collapsible</strong> when 2+ in a block</span>
+                            </li>
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>Clusters are <strong>single-line with truncation</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Content</h3>
+                        <ul class="checklist">
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>Recent clusters use <code>cluster-recent</code> class</span>
+                            </li>
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>Cluster Types legend uses <code>&lt;code&gt;</code> tags, not colored tags</span>
+                            </li>
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span><strong>No emojis</strong> in platform string titles</span>
+                            </li>
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>Every #ambiguous term has documented anchors</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Visual</h3>
+                        <ul class="checklist">
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>CSS is copied exactly from template</span>
+                            </li>
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>JavaScript includes auto-collapse logic for sub-blocks</span>
+                            </li>
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>Blocks have blue left border</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Final</h3>
+                        <ul class="checklist">
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>Would a sourcer understand this in <strong>15 seconds</strong>?</span>
+                            </li>
+                            <li>
+                                <span class="checklist-box"></span>
+                                <span>Are strings <strong>copy-paste ready</strong>?</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <p>Template version <span class="footer-version">4.8</span> · Created by Sam Vangelos · December 2025</p>
+                <p>Designed for technically dense roles requiring domain comprehension and precision targeting.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        const templateContent = `
+# Boolean Construction Template v4.8
+
+**Version:** 4.8  
+**Last Updated:** December 2025  
+**Author:** Sam Vangelos
+
+---
+
+## Your Task
+
+Analyze the attached job description and generate a **complete, standalone HTML file** for Boolean sourcing.
+
+**You must:**
+1. Use the exact CSS provided in Section A (copy it literally)
+2. Build all components using the exact HTML patterns in Section B
+3. Follow the clustering taxonomy in Section C
+4. Apply the gating rules in Section D
+5. Include all fixed content from Section E
+6. Structure your output according to Section F
+7. Complete the audit checklist in Section G before outputting
+
+**You must not:**
+- Modify the CSS in any way
+- Invent new component patterns
+- Skip any required sections
+- Create monolithic parentheticals (always cluster)
+- Use emojis in platform string titles
+- Use colored tags in the "How to Use" cluster types legend
+
+---
+
+## Section A: CSS (Use Exactly)
+
+Copy this entire style block into your output's \`<head>\`:
+
+\`\`\`css
+:root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --bg-elevated: #1c2128;
+    --border-primary: #30363d;
+    --border-accent: #3b82f6;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --accent-blue: #58a6ff;
+    --accent-green: #3fb950;
+    --accent-orange: #d29922;
+    --accent-red: #f85149;
+    --accent-purple: #a371f7;
+    --accent-cyan: #39c5cf;
+    --code-bg: #0d1117;
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-primary);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ========================================
+   SIDEBAR
+   ======================================== */
+.sidebar {
+    width: 260px;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-primary);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px 0;
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border-primary);
+    margin-bottom: 12px;
+}
+
+.sidebar-logo {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    margin-bottom: 6px;
+}
+
+.sidebar-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.sidebar-version {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.nav-section {
+    padding: 6px 12px;
+}
+
+.nav-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 6px 8px;
+    margin-bottom: 2px;
+}
+
+.nav-link {
+    display: block;
+    padding: 8px 10px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s ease;
+    border-left: 2px solid transparent;
+}
+
+.nav-link:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.nav-link.active {
+    background: rgba(88, 166, 255, 0.1);
+    color: var(--accent-blue);
+    border-left-color: var(--accent-blue);
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.main {
+    flex: 1;
+    margin-left: 260px;
+    padding: 32px 60px;
+    max-width: 1100px;
+}
+
+.page-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.page-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: rgba(88, 166, 255, 0.1);
+    border: 1px solid rgba(88, 166, 255, 0.2);
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent-blue);
+    margin-bottom: 12px;
+}
+
+.page-badge::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--accent-green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    max-width: 560px;
+}
+
+.page-meta {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ========================================
+   SECTIONS
+   ======================================== */
+.section {
+    margin-bottom: 36px;
+    scroll-margin-top: 24px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.section-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-blue);
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.section-toggle {
+    margin-left: auto;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.section-header:hover .section-toggle {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+}
+
+.section-toggle svg {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.2s ease;
+}
+
+.section.collapsed .section-toggle svg {
+    transform: rotate(-90deg);
+}
+
+.section-content {
+    padding-left: 38px;
+}
+
+.section.collapsed .section-content {
+    display: none;
+}
+
+.subsection {
+    margin-bottom: 20px;
+}
+
+.subsection-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.subsection-title::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: var(--accent-blue);
+    border-radius: 2px;
+}
+
+p {
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ========================================
+   BLOCKS - Level 1
+   ======================================== */
+.block {
+    position: relative;
+    background: rgba(88, 166, 255, 0.03);
+    border: 1px solid var(--border-primary);
+    border-left: 4px solid var(--accent-blue);
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.block-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.block-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--accent-blue);
+    border-radius: var(--radius-sm);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--bg-primary);
+}
+
+.block-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.block-content {
+    padding: 12px 14px;
+}
+
+/* ========================================
+   SUB-BLOCKS - Level 2 (Collapsible)
+   ======================================== */
+.sub-block {
+    margin-left: 8px;
+    margin-bottom: 8px;
+}
+
+.sub-block:last-child {
+    margin-bottom: 0;
+}
+
+.sub-block-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+}
+
+.sub-block-header:hover {
+    border-bottom-color: var(--border-primary);
+}
+
+.sub-block-toggle {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: transform 0.15s ease;
+}
+
+.sub-block-toggle svg {
+    width: 10px;
+    height: 10px;
+}
+
+.sub-block.collapsed .sub-block-toggle {
+    transform: rotate(-90deg);
+}
+
+.sub-block-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-left: 2px solid var(--border-primary);
+    padding-left: 8px;
+}
+
+.sub-block-count {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.sub-block-content {
+    padding: 8px 0 8px 24px;
+}
+
+.sub-block.collapsed .sub-block-content {
+    display: none;
+}
+
+/* Single sub-block (no collapse needed) */
+.sub-block.solo .sub-block-header {
+    cursor: default;
+}
+
+.sub-block.solo .sub-block-toggle {
+    display: none;
+}
+
+.sub-block.solo .sub-block-count {
+    display: none;
+}
+
+/* ========================================
+   CLUSTERS - Level 3 (Single-line, truncated)
+   ======================================== */
+.cluster {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--bg-tertiary);
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.cluster:last-child {
+    border-bottom: none;
+}
+
+.cluster:hover {
+    background: rgba(88, 166, 255, 0.05);
+    margin: 0 -8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.cluster-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 80px;
+    flex-shrink: 0;
+}
+
+.cluster-label::before {
+    content: "•";
+    margin-right: 6px;
+    color: var(--border-primary);
+}
+
+/* Recent clusters */
+.cluster.cluster-recent .cluster-label {
+    color: var(--accent-orange);
+}
+
+.cluster.cluster-recent .cluster-label::after {
+    content: " ⚡";
+    font-size: 11px;
+}
+
+.cluster-code {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent-cyan);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: var(--bg-primary);
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-primary);
+}
+
+.cluster-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+}
+
+.cluster-copy:hover {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border-color: var(--accent-blue);
+}
+
+.cluster-copy.copied {
+    background: rgba(63, 185, 80, 0.15);
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.cluster-copy svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Expanded cluster (shows full code) */
+.cluster.expanded .cluster-code {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ========================================
+   STANDALONE CODE BLOCKS
+   ======================================== */
+.code-block {
+    position: relative;
+    background: var(--code-bg);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.code-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.code-copy {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.code-copy:hover {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border-color: var(--accent-blue);
+}
+
+.code-copy.copied {
+    background: rgba(63, 185, 80, 0.1);
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+pre {
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg-tertiary);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--accent-cyan);
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* ========================================
+   TABLES
+   ======================================== */
+.table-wrapper {
+    overflow-x: auto;
+    margin: 10px 0;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-primary);
+    white-space: nowrap;
+}
+
+td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    vertical-align: top;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: var(--bg-secondary);
+}
+
+/* ========================================
+   TAGS
+   ======================================== */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.tag-recent { background: rgba(210, 153, 34, 0.15); color: var(--accent-orange); }
+.tag-ambiguous { background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
+.tag-broad { background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); }
+.tag-specific { background: rgba(163, 113, 247, 0.15); color: var(--accent-purple); }
+
+.signal {
+    display: inline-flex;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.signal-target { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+.signal-adjacent { background: rgba(210, 153, 34, 0.15); color: var(--accent-orange); }
+.signal-false { background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
+
+/* ========================================
+   CALLOUTS
+   ======================================== */
+.callout {
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    margin: 12px 0;
+    border-left: 3px solid;
+}
+
+.callout-info {
+    background: rgba(88, 166, 255, 0.08);
+    border-color: var(--accent-blue);
+}
+
+.callout-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--accent-blue);
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.callout p {
+    margin: 0;
+    font-size: 13px;
+}
+
+/* ========================================
+   LISTS
+   ======================================== */
+ul, ol {
+    margin: 10px 0;
+    padding-left: 18px;
+    color: var(--text-secondary);
+}
+
+li {
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+li::marker {
+    color: var(--accent-blue);
+}
+
+/* ========================================
+   RELATIONSHIPS
+   ======================================== */
+.relationship-group {
+    margin-bottom: 16px;
+}
+
+.relationship-group-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.relationship-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.relationship-symbol {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.relationship-symbol.strong { color: var(--accent-green); }
+.relationship-symbol.validates { color: var(--accent-blue); }
+.relationship-symbol.differentiates { color: var(--accent-orange); }
+.relationship-symbol.excludes { color: var(--accent-red); }
+
+.relationship-content {
+    flex: 1;
+}
+
+.relationship-blocks {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-primary);
+    font-size: 12px;
+}
+
+.relationship-meaning {
+    color: var(--text-secondary);
+    margin-top: 2px;
+    font-size: 12px;
+}
+
+/* ========================================
+   ARCHETYPES
+   ======================================== */
+.archetype-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.archetype-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease;
+}
+
+.archetype-header:hover {
+    background: var(--bg-tertiary);
+}
+
+.archetype-toggle {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    flex-shrink: 0;
+}
+
+.archetype-toggle svg {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.2s ease;
+}
+
+.archetype-item.expanded .archetype-toggle svg {
+    transform: rotate(90deg);
+}
+
+.archetype-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.archetype-summary {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-left: 4px;
+}
+
+.archetype-content {
+    display: none;
+}
+
+.archetype-item.expanded .archetype-content {
+    display: block;
+}
+
+.archetype-body {
+    padding: 0 14px 14px 42px;
+    border-top: 1px solid var(--border-primary);
+}
+
+.archetype-section {
+    margin-top: 12px;
+}
+
+.archetype-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.archetype-section p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.archetype-blocks {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.archetype-block-tag {
+    padding: 3px 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-blue);
+}
+
+/* ========================================
+   DISAMBIGUATION
+   ======================================== */
+.disambiguation-entry {
+    margin-bottom: 20px;
+}
+
+.disambiguation-term {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.disambiguation-recommendation {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+.disambiguation-recommendation strong {
+    color: var(--accent-blue);
+}
+
+/* ========================================
+   PLATFORM STRINGS
+   ======================================== */
+.platform-group {
+    margin-bottom: 20px;
+}
+
+.platform-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.platform-description {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+/* ========================================
+   REF CARDS
+   ======================================== */
+.ref-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin: 12px 0;
+}
+
+.ref-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+}
+
+.ref-card-item {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+}
+
+.ref-card-item-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent-blue);
+    margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ref-card-item p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.footer {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-primary);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.footer a {
+    color: var(--accent-blue);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 20px 16px;
+    }
+
+    .page-title {
+        font-size: 26px;
+    }
+
+    .section-content {
+        padding-left: 0;
+    }
+
+    .archetype-body {
+        padding-left: 14px;
+    }
+}
+
+.mobile-toggle {
+    display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 200;
+    width: 36px;
+    height: 36px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 1024px) {
+    .mobile-toggle {
+        display: flex;
+    }
+}
+\`\`\`
+
+---
+
+## Section B: Component Library
+
+Use these exact HTML patterns. Do not modify structure or class names.
+
+### B.1 Complete Document Template
+
+Generate a complete HTML file following this structure. Replace all \`{{PLACEHOLDER}}\` values with role-specific content.
+
+\`\`\`html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boolean Analysis: {{ROLE_TITLE}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* PASTE COMPLETE CSS FROM SECTION A HERE */
+    </style>
+</head>
+<body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">Boolean Analysis</div>
+                <div class="sidebar-title">{{ROLE_TITLE}}</div>
+                <div class="sidebar-version">v4.8 · {{MONTH}} {{YEAR}}</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a href="#overview" class="nav-link">How to Use</a>
+                <a href="#signals" class="nav-link">Extracted Signals</a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Search Building</div>
+                <a href="#blocks" class="nav-link">Boolean Blocks</a>
+                <a href="#relationships" class="nav-link">Block Relationships</a>
+                <a href="#archetypes" class="nav-link">Archetypes</a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Reference</div>
+                <a href="#disambiguation" class="nav-link">Disambiguation</a>
+                <a href="#exclusions" class="nav-link">Exclusions</a>
+                <a href="#strings" class="nav-link">Ready-to-Use Strings</a>
+            </div>
+        </nav>
+
+        <main class="main">
+            <header class="page-header">
+                <div class="page-badge">Boolean Search Guide</div>
+                <h1 class="page-title">{{ROLE_TITLE}}</h1>
+                <p class="page-subtitle">{{ROLE_SUMMARY}}</p>
+                <p class="page-meta">Generated {{MONTH}} {{YEAR}} · Template v4.8 · {{COMPANY}}</p>
+            </header>
+
+            <!-- SECTION 0: OVERVIEW -->
+            <section class="section" id="overview">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">0</span>
+                    <h2 class="section-title">How to Use This Guide</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <p>This guide contains Boolean search building blocks for sourcing candidates.</p>
+                    
+                    <div class="subsection">
+                        <h3 class="subsection-title">Quick Start</h3>
+                        <ol>
+                            <li><strong>Jump to Ready-to-Use Strings</strong> if you need working searches immediately</li>
+                            <li><strong>Explore Archetypes</strong> to understand candidate profiles</li>
+                            <li><strong>Use Boolean Blocks</strong> to build custom searches</li>
+                        </ol>
+                    </div>
+
+                    <div class="subsection">
+                        <h3 class="subsection-title">Cluster Types</h3>
+                        <ul>
+                            <li><code>Broad</code> — High recall, catches anyone in the space</li>
+                            <li><code>Established</code> — Mainstream methods/tools (2+ years)</li>
+                            <li><code>Recent</code> — Cutting-edge (last 12-18 months)</li>
+                            <li><code>Specific</code> — Implementation-level, niche terms</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 1: EXTRACTED SIGNALS -->
+            <section class="section" id="signals">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">1</span>
+                    <h2 class="section-title">Extracted Signals</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    <div class="ref-card">
+                        <div class="ref-card-grid">
+                            <div class="ref-card-item">
+                                <div class="ref-card-item-title">Core Function</div>
+                                <p>{{CORE_FUNCTION}}</p>
+                            </div>
+                            <div class="ref-card-item">
+                                <div class="ref-card-item-title">Technical Domain</div>
+                                <p>{{TECHNICAL_DOMAIN}}</p>
+                            </div>
+                            <div class="ref-card-item">
+                                <div class="ref-card-item-title">Key Tools</div>
+                                <p>{{KEY_TOOLS}}</p>
+                            </div>
+                            <div class="ref-card-item">
+                                <div class="ref-card-item-title">Seniority</div>
+                                <p>{{SENIORITY}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: BOOLEAN BLOCKS -->
+            <section class="section" id="blocks">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">2</span>
+                    <h2 class="section-title">Boolean Blocks</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    {{BLOCKS}}
+                </div>
+            </section>
+
+            <!-- SECTION 3: BLOCK RELATIONSHIPS -->
+            <section class="section" id="relationships">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">3</span>
+                    <h2 class="section-title">Block Relationships</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    {{RELATIONSHIPS}}
+                </div>
+            </section>
+
+            <!-- SECTION 4: ARCHETYPES -->
+            <section class="section" id="archetypes">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">4</span>
+                    <h2 class="section-title">Candidate Archetypes</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    {{ARCHETYPES}}
+                </div>
+            </section>
+
+            <!-- SECTION 5: DISAMBIGUATION -->
+            <section class="section" id="disambiguation">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">5</span>
+                    <h2 class="section-title">Disambiguation</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    {{DISAMBIGUATION}}
+                </div>
+            </section>
+
+            <!-- SECTION 6: EXCLUSIONS -->
+            <section class="section" id="exclusions">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">6</span>
+                    <h2 class="section-title">Exclusion Patterns</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    {{EXCLUSIONS}}
+                </div>
+            </section>
+
+            <!-- SECTION 7: READY-TO-USE STRINGS -->
+            <section class="section" id="strings">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-number">7</span>
+                    <h2 class="section-title">Ready-to-Use Strings</h2>
+                    <span class="section-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="section-content">
+                    {{PLATFORM_STRINGS}}
+                </div>
+            </section>
+
+            <footer class="footer">
+                <p>Built with <a href="https://github.com/samvangelos/boolean-template" target="_blank">Sam Vangelos' Boolean Construction Template</a> v4.8</p>
+                <p>{{ROLE_TITLE}} · {{COMPANY}} · {{MONTH}} {{YEAR}}</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Toggle main sections
+        function toggleSection(header) {
+            const section = header.closest('.section');
+            section.classList.toggle('collapsed');
+        }
+
+        // Toggle sub-blocks
+        function toggleSubBlock(header) {
+            const subBlock = header.closest('.sub-block');
+            if (subBlock.classList.contains('solo')) return;
+            subBlock.classList.toggle('collapsed');
+        }
+
+        // Toggle cluster expansion
+        function toggleCluster(cluster) {
+            cluster.classList.toggle('expanded');
+        }
+
+        // Toggle archetype
+        function toggleArchetype(element) {
+            element.classList.toggle('expanded');
+        }
+
+        // Toggle sidebar (mobile)
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Copy cluster code
+        function copyCluster(button) {
+            const cluster = button.closest('.cluster');
+            const code = cluster.querySelector('.cluster-code').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.classList.add('copied');
+                setTimeout(() => button.classList.remove('copied'), 1500);
+            });
+        }
+
+        // Copy code block
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('code').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.classList.add('copied');
+                const originalText = button.innerHTML;
+                button.innerHTML = \`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg> Copied!\`;
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalText;
+                }, 1500);
+            });
+        }
+
+        // Auto-collapse sub-blocks in blocks with 2+ sub-blocks
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.block').forEach(block => {
+                const subBlocks = block.querySelectorAll('.sub-block');
+                if (subBlocks.length > 1) {
+                    subBlocks.forEach(sb => sb.classList.add('collapsed'));
+                } else if (subBlocks.length === 1) {
+                    subBlocks[0].classList.add('solo');
+                }
+            });
+        });
+
+        // Highlight active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    <\/script>
+</body>
+</html>
+\`\`\`
+
+### B.2 Block Component
+
+\`\`\`html
+<div class="block">
+    <div class="block-header">
+        <span class="block-number">{{N}}</span>
+        <h3 class="block-title">{{BLOCK_NAME}}</h3>
+    </div>
+    <div class="block-content">
+        {{SUB_BLOCKS}}
+    </div>
+</div>
+\`\`\`
+
+### B.3 Sub-Block Component (Collapsible)
+
+Sub-blocks are collapsible when there are 2+ in a block. Use \`data-clusters\` to set cluster count.
+
+\`\`\`html
+<div class="sub-block" data-clusters="{{N}}">
+    <div class="sub-block-header" onclick="toggleSubBlock(this)">
+        <span class="sub-block-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 9l-7 7-7-7"/>
+            </svg>
+        </span>
+        <h4 class="sub-block-title">{{SUB_BLOCK_NAME}}</h4>
+        <span class="sub-block-count">{{N}} clusters</span>
+    </div>
+    <div class="sub-block-content">
+        {{CLUSTERS}}
+    </div>
+</div>
+\`\`\`
+
+**Note:** The JavaScript will auto-collapse sub-blocks when there are 2+ in a block, and add \`solo\` class when there's only 1.
+
+### B.4 Cluster Component (Single-line, Truncated)
+
+For **non-recent** clusters:
+\`\`\`html
+<div class="cluster" onclick="toggleCluster(this)">
+    <span class="cluster-label">{{CLUSTER_TYPE}}</span>
+    <span class="cluster-code">{{BOOLEAN_STRING}}</span>
+    <button class="cluster-copy" onclick="event.stopPropagation(); copyCluster(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+    </button>
+</div>
+\`\`\`
+
+For **recent** clusters (add \`cluster-recent\` class):
+\`\`\`html
+<div class="cluster cluster-recent" onclick="toggleCluster(this)">
+    <span class="cluster-label">Recent</span>
+    <span class="cluster-code">{{BOOLEAN_STRING}}</span>
+    <button class="cluster-copy" onclick="event.stopPropagation(); copyCluster(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+    </button>
+</div>
+\`\`\`
+
+**Behavior:** 
+- Clusters show truncated by default (single line with ellipsis)
+- Click row to expand and show full string
+- Recent clusters get ⚡ indicator via CSS
+
+### B.5 Additional Components
+
+**Relationship Item:**
+\`\`\`html
+<div class="relationship-item">
+    <span class="relationship-symbol {{TYPE}}">{{SYMBOL}}</span>
+    <div class="relationship-content">
+        <div class="relationship-blocks">{{BLOCK_PAIR}}</div>
+        <div class="relationship-meaning">{{MEANING}}</div>
+    </div>
+</div>
+\`\`\`
+Where \`{{TYPE}}\` is one of: \`strong\`, \`validates\`, \`differentiates\`, \`excludes\`
+And \`{{SYMBOL}}\` is one of: \`+\`, \`→\`, \`|\`, \`✗\`
+
+**Archetype Item:**
+\`\`\`html
+<div class="archetype-item" onclick="toggleArchetype(this)">
+    <div class="archetype-header">
+        <span class="archetype-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+            </svg>
+        </span>
+        <span class="archetype-name">{{ARCHETYPE_NAME}}</span>
+        <span class="archetype-summary">— {{ARCHETYPE_SUMMARY}}</span>
+    </div>
+    <div class="archetype-content">
+        <div class="archetype-body">
+            <div class="archetype-section">
+                <div class="archetype-section-title">Description</div>
+                <p>{{DESCRIPTION}}</p>
+            </div>
+            <div class="archetype-section">
+                <div class="archetype-section-title">Key Blocks</div>
+                <div class="archetype-blocks">
+                    {{BLOCK_TAGS}}
+                </div>
+            </div>
+            <div class="archetype-section">
+                <div class="archetype-section-title">LinkedIn String</div>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-label">LinkedIn Recruiter</span>
+                        <button class="code-copy" onclick="event.stopPropagation(); copyCode(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                    <pre><code>{{LINKEDIN_STRING}}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+\`\`\`
+
+**Platform String Group:**
+\`\`\`html
+<div class="platform-group">
+    <div class="platform-title">{{PLATFORM_NAME}} — {{SEARCH_TYPE}}</div>
+    <p class="platform-description">{{DESCRIPTION}}</p>
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-label">{{PLATFORM_NAME}}</span>
+            <button class="code-copy" onclick="copyCode(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy
+            </button>
+        </div>
+        <pre><code>{{BOOLEAN_STRING}}</code></pre>
+    </div>
+</div>
+\`\`\`
+
+**Disambiguation Entry:**
+\`\`\`html
+<div class="disambiguation-entry">
+    <div class="disambiguation-term">"{{TERM}}"</div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>If paired with...</th>
+                    <th>Likely context</th>
+                    <th>Signal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{TABLE_ROWS}}
+            </tbody>
+        </table>
+    </div>
+    <div class="disambiguation-recommendation">
+        <strong>Recommendation:</strong> {{RECOMMENDATION}}
+    </div>
+</div>
+\`\`\`
+
+---
+
+## Section C: Clustering Taxonomy
+
+Every sub-block must contain **2-4 clusters**. Assign terms to clusters using this taxonomy:
+
+| Cluster Type | Label Text | What belongs | CSS Class |
+|--------------|------------|--------------|-----------|
+| **Umbrella** | "Broad" | Terms that catch anyone in the space. High recall, low precision. | (none) |
+| **Established** | "Established" | Methods/tools in mainstream use 2+ years. | (none) |
+| **Recent** | "Recent" | Methods/tools from last 12-18 months. | \`cluster-recent\` |
+| **Specific** | "Specific" | Implementation-level: tool names, code patterns, niche techniques. | (none) |
+
+### Clustering Rules
+
+1. **Every sub-block must have at least one Broad OR Established cluster**
+2. **Recent clusters use \`class="cluster cluster-recent"\`** — this adds ⚡ indicator via CSS
+3. **Maximum 8-10 terms per cluster** — if you have more, split by specificity
+4. **Cluster order: Broad → Established → Recent → Specific** (top to bottom)
+
+---
+
+## Section D: Gating Rules
+
+### D.1 Block Gating
+
+| Constraint | Value |
+|------------|-------|
+| Floor | 5 blocks |
+| Ceiling | 8 blocks |
+
+**Distinctiveness test for adding block N+1:**
+1. Does this concept cluster represent a genuinely distinct search dimension?
+2. Could these terms be folded into an existing block as a sub-block instead?
+3. Would a sourcer realistically search this dimension independently?
+
+If **yes to all three** → create the block  
+If **no to any** → fold into existing block as sub-block
+
+### D.2 Other Constraints
+
+| Element | Floor | Ceiling |
+|---------|-------|---------|
+| Sub-blocks per block | 2 | 4 |
+| Clusters per sub-block | 2 | 4 |
+| Archetypes | 2 | 4 |
+| Relationships | 6 | 10 |
+| Disambiguation entries | 2 | 4 |
+| Platform strings | 4 | 8 |
+
+---
+
+## Section E: Fixed Content
+
+### E.1 How to Use This Guide
+
+Include this standard content (use \`<code>\` tags for cluster types, not colored tags):
+
+\`\`\`html
+<div class="subsection">
+    <h3 class="subsection-title">Quick Start</h3>
+    <ol>
+        <li><strong>Jump to Ready-to-Use Strings</strong> if you need working searches immediately</li>
+        <li><strong>Explore Archetypes</strong> to understand candidate profiles</li>
+        <li><strong>Use Boolean Blocks</strong> to build custom searches</li>
+    </ol>
+</div>
+
+<div class="subsection">
+    <h3 class="subsection-title">Cluster Types</h3>
+    <ul>
+        <li><code>Broad</code> — High recall, catches anyone in the space</li>
+        <li><code>Established</code> — Mainstream methods/tools (2+ years)</li>
+        <li><code>Recent</code> — Cutting-edge (last 12-18 months)</li>
+        <li><code>Specific</code> — Implementation-level, niche terms</li>
+    </ul>
+</div>
+\`\`\`
+
+### E.2 Platform String Titles
+
+**Do NOT use emojis.** Use plain text titles:
+
+- ✅ \`LinkedIn Recruiter — Primary Search\`
+- ✅ \`GitHub — Code Eval Contributors\`
+- ❌ \`💼 LinkedIn Recruiter — Primary Search\`
+- ❌ \`🐙 GitHub — Code Eval Contributors\`
+
+---
+
+## Section F: Output Structure
+
+Your output must follow this exact section order:
+
+1. **Overview** (Section 0) — How to Use
+2. **Extracted Signals** (Section 1) — 4 signal cards
+3. **Boolean Blocks** (Section 2) — 5-8 blocks with clustered sub-blocks
+4. **Block Relationships** (Section 3) — 6-10 relationships
+5. **Archetypes** (Section 4) — 2-4 collapsible archetypes
+6. **Disambiguation** (Section 5) — 2-4 ambiguous terms
+7. **Exclusions** (Section 6) — Patterns + NOT clauses
+8. **Ready-to-Use Strings** (Section 7) — 4-8 platform-specific strings
+9. **Footer**
+
+---
+
+## Section G: Pre-Output Audit Checklist
+
+**Before outputting, verify each item. If any fail, revise.**
+
+### Structure Checks
+- [ ] Block count: 5-8
+- [ ] Sub-blocks per block: 2-4
+- [ ] Clusters per sub-block: 2-4
+- [ ] Archetypes: 2-4
+- [ ] All required sections present
+
+### Hierarchy Checks
+- [ ] Clusters use single-line layout (label + code + copy button)
+- [ ] Sub-blocks have toggle and cluster count
+- [ ] Recent clusters have \`cluster-recent\` class
+- [ ] Blocks have blue left border
+
+### Content Checks
+- [ ] No emojis in platform string titles
+- [ ] Cluster Types legend uses \`<code>\` tags, not colored tags
+- [ ] Each cluster includes action-verb variants where applicable
+- [ ] No cluster exceeds 10 terms
+
+### Visual Checks
+- [ ] CSS is copied exactly from Section A
+- [ ] All components use exact HTML from Section B
+- [ ] JavaScript includes auto-collapse logic for sub-blocks
+
+### Final Verification
+- [ ] Would a sourcer understand this in 15 seconds?
+- [ ] Are strings copy-paste ready?
+- [ ] Did I challenge at least one initial assumption and improve it?
+`;
+        function downloadTemplate() {
+            const blob = new Blob([templateContent], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Boolean_Construction_Template_v4.8.md';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleSection(header) {
+            const section = header.closest('.section');
+            section.classList.toggle('collapsed');
+        }
+
+        function toggleArchetype(header) {
+            const item = header.closest('.archetype-item');
+            item.classList.toggle('expanded');
+        }
+
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.classList.add('copied');
+                button.querySelector('span').textContent = 'Copied!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.querySelector('span').textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
